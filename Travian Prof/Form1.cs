@@ -372,7 +372,7 @@ namespace Travian_Prof
                             }
                             finally
                             {
-                                int ekstraSure2 = random.Next(1, 8); // 1 ile 4 dakika arasında rastgele süre oluştur
+                                int ekstraSure2 = random.Next(1, 3); // 1 ile 3 dakika arasında rastgele süre oluştur
 
                                 // Timer'ı yeniden başlat
                                 geriSayimSure = (int.Parse(tekrartxt.Text) + ekstraSure2) * 60; // Süreyi yeniden başlat
