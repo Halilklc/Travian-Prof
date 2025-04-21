@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SeleniumExtras.WaitHelpers;
 using OpenQA.Selenium.Interactions;
+using Telegram.Bot.Types;
 
 namespace Travian_Prof
 {
@@ -27,24 +28,20 @@ namespace Travian_Prof
         public void Execute(string link)
         {
             Random random = new Random();
-
             try
+
             {
-                // Saatlik üretimi al
-                var productionElement = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='production']/tbody/tr[4]/td[3]")));
-                string productionValue = productionElement.Text.Trim(); // Öğenin metnini al
+                var sayfalar = new Sayfalar(driver);
+                sayfalar.NPCSayfasi();
 
-                // Saatlik üretimi sayısal değere çevir
-                double saatlikUretim = ParseToDouble(productionValue);
 
-                // 1. Adım: Belirtilen linke git
-                driver.Navigate().GoToUrl(link + "/build.php?id=31&gid=17&t=0");
-                Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
 
-                // 2. Adım: 'aria/Hammadde takası' metnini bul ve tıkla
-                var takasLink = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@aria-label, 'Hammadde takası') or contains(text(), 'Hammadde takası')]")));
-                mouseSimulator.SimulateMouseMovementAndClick(takasLink); // Simulate mouse movement and click
-                Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
+                var takasLink = wait.Until(ExpectedConditions.ElementIsVisible(
+            By.XPath("//*[contains(@class, 'textButtonV1') and contains(@class, 'gold')]")));
+                mouseSimulator.SimulateMouseMovementAndClick(takasLink);
+                Thread.Sleep(1000);
+
+
 
                 // Yeni XPath'lere tıklayıp içeriğini temizleme
                 string[] inputXpaths = new string[] {
@@ -65,18 +62,17 @@ namespace Travian_Prof
                 element2.Clear();  // İçeriği temizle
                 Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
 
-                element2.SendKeys("0"); // 0 yazdır
-                Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
 
-                // 'aria/Hammadde dağıt' XPath'ini bul ve tıkla
-                var hammaddeLink = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(@aria-label, 'Hammadde dağıt') or contains(text(), 'Hammadde dağıt')]")));
-                mouseSimulator.SimulateMouseMovementAndClick(hammaddeLink); // Simulate mouse movement and click
-                Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
+                var hammaddeLink = wait.Until(ExpectedConditions.ElementIsVisible(
+                 By.XPath("//*[contains(@onclick, 'exchangeResources.distribute')]")));
+                mouseSimulator.SimulateMouseMovementAndClick(hammaddeLink);
+                Thread.Sleep(2000);
 
 
-                // '//*[@id="npc_market_button"]' XPath'ini bul ve altın harcamayı başlat
-                var altinHarcamButton = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='npc_market_button']")));
-                mouseSimulator.SimulateMouseMovementAndClick(altinHarcamButton); // Simulate mouse movement and click
+               var altinHarcamButton = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='npc_market_button']")));
+               mouseSimulator.SimulateMouseMovementAndClick(altinHarcamButton);
+                Thread.Sleep(new Random().Next(2000, 5000));
+
             }
             catch (Exception ex)
             {
@@ -85,27 +81,12 @@ namespace Travian_Prof
             }
             finally
             {
-                driver.Navigate().GoToUrl(link + "/dorf1.php");
+                var sayfalar = new Sayfalar(driver);
+                sayfalar.AnasayfaAc();
+                Thread.Sleep(new Random().Next(1500, 3000)); // 1.5 - 3 saniye rastgele bekleme
+
             }
         }
 
-        // Parse to double helper function
-        private double ParseToDouble(string value)
-        {
-            string cleanedValue = Regex.Replace(value, @"[^\d.-]", ""); // Sayı ve negatif işaretini bırak
-            double parsedValue = 0;
-
-            if (double.TryParse(cleanedValue, NumberStyles.Any, CultureInfo.InvariantCulture, out parsedValue))
-            {
-                return parsedValue;
-            }
-            else
-            {
-                Console.WriteLine($"'{value}' değeri sayısal bir değere dönüştürülemedi.");
-                return 0;
-            }
-        }
-    }
-
-    
+    }    
 }

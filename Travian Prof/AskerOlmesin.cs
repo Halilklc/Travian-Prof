@@ -31,8 +31,8 @@ namespace Travian_Prof
         {
             try
             {
-                BilgiEkle("Navigasyon başlıyor.");
-                _driver.Navigate().GoToUrl(_urladres + "/dorf1.php");
+                var sayfalar = new Sayfalar(_driver);
+                sayfalar.AnasayfaAc();
                 BilgiEkle("Navigasyon tamamlandı.");
 
                 var villageElements = _wait.Until(
@@ -44,7 +44,7 @@ namespace Travian_Prof
                 BilgiEkle($"Toplam köy sayısı: {villageElements.Count}");
 
                 List<string> villageXpaths = new List<string>();
-                for (int i = 1; i <= villageElements.Count+1; i++)
+                for (int i = 1; i <= villageElements.Count; i++)
                 {
                     string xpath = $"//*[@id='sidebarBoxVillageList']/div[2]/div[2]/div[{i}]/div/a/div/span[2]";
                     villageXpaths.Add(xpath);
@@ -152,8 +152,8 @@ namespace Travian_Prof
                     // Koşullar sağlandığında yapılacak işlemler
 
                     BilgiEkle("Ölüm Tehlikesi!!! OTO NPC Aktif edildi.");
-                    OtoNpc_tahilekle otoNpcSade = new OtoNpc_tahilekle(_driver, _urladres);
-                    otoNpcSade.Execute(_urladres);
+                    OtoNpc_tahilekle otonpcteh = new OtoNpc_tahilekle(_driver, _urladres);
+                    otonpcteh.Execute(_urladres);
                     BilgiEkle($"NPC tamamlandı. Diğer köylere bakılıyor.");
                 }
             }

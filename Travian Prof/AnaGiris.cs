@@ -11,9 +11,6 @@ namespace Travian_Prof
     public class AnaGiris
     {
         private Random random = new Random(); // Rastgele süreler eklemek için
-        private WebDriverWait wait;          // Dinamik bekleme
-        private IWebDriver driver;          // WebDriver nesnesi
-
         public IWebDriver GirisYap(
             string urladresi,
             string username,

@@ -97,6 +97,7 @@
             label26 = new Label();
             label31 = new Label();
             lblLisansDurumu2 = new Label();
+            button2 = new Button();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -110,7 +111,7 @@
             // 
             label1.AutoSize = true;
             label1.BackColor = SystemColors.Control;
-            label1.Location = new Point(20, 30);
+            label1.Location = new Point(18, 63);
             label1.Name = "label1";
             label1.Size = new Size(97, 20);
             label1.TabIndex = 0;
@@ -119,7 +120,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(20, 67);
+            label2.Location = new Point(18, 100);
             label2.Name = "label2";
             label2.Size = new Size(92, 20);
             label2.TabIndex = 1;
@@ -128,7 +129,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(20, 100);
+            label3.Location = new Point(18, 133);
             label3.Name = "label3";
             label3.Size = new Size(45, 20);
             label3.TabIndex = 2;
@@ -137,7 +138,7 @@
             // sunucutxt
             // 
             sunucutxt.Font = new Font("Segoe UI Semibold", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            sunucutxt.Location = new Point(128, 27);
+            sunucutxt.Location = new Point(126, 60);
             sunucutxt.Name = "sunucutxt";
             sunucutxt.Size = new Size(177, 25);
             sunucutxt.TabIndex = 3;
@@ -145,7 +146,7 @@
             // nicknametxt
             // 
             nicknametxt.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            nicknametxt.Location = new Point(128, 64);
+            nicknametxt.Location = new Point(126, 97);
             nicknametxt.Name = "nicknametxt";
             nicknametxt.Size = new Size(177, 27);
             nicknametxt.TabIndex = 4;
@@ -153,14 +154,14 @@
             // passwordtxt
             // 
             passwordtxt.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            passwordtxt.Location = new Point(128, 97);
+            passwordtxt.Location = new Point(126, 130);
             passwordtxt.Name = "passwordtxt";
             passwordtxt.Size = new Size(177, 27);
             passwordtxt.TabIndex = 5;
             // 
             // girisbtn
             // 
-            girisbtn.Location = new Point(20, 130);
+            girisbtn.Location = new Point(18, 163);
             girisbtn.Name = "girisbtn";
             girisbtn.Size = new Size(287, 43);
             girisbtn.TabIndex = 6;
@@ -171,7 +172,7 @@
             // formatbtn
             // 
             formatbtn.ForeColor = Color.IndianRed;
-            formatbtn.Location = new Point(231, 201);
+            formatbtn.Location = new Point(229, 234);
             formatbtn.Name = "formatbtn";
             formatbtn.Size = new Size(74, 36);
             formatbtn.TabIndex = 7;
@@ -184,14 +185,14 @@
             bilgilbx.Font = new Font("Segoe UI Semibold", 9F);
             bilgilbx.FormattingEnabled = true;
             bilgilbx.Items.AddRange(new object[] { "Programı ilk kez çalıştırırken mutlaka", "\"Giriş Yap ve Bilgi Çek\" butonuna tıklayın.", "Bilgi çekildikten sonra,", "\"Ayarları Kaydet\" butonuna tıklayın.", "Not: Bu işlem sadece 1 kez yapılacaktır..", "Bilgiler kayıt olduktan sonra her seferinde,", "bu işlemi yapmayınız.." });
-            bilgilbx.Location = new Point(18, 257);
+            bilgilbx.Location = new Point(18, 297);
             bilgilbx.Name = "bilgilbx";
-            bilgilbx.Size = new Size(287, 264);
+            bilgilbx.Size = new Size(287, 224);
             bilgilbx.TabIndex = 8;
             // 
             // kaydetbtn
             // 
-            kaydetbtn.Location = new Point(20, 186);
+            kaydetbtn.Location = new Point(18, 219);
             kaydetbtn.Name = "kaydetbtn";
             kaydetbtn.Size = new Size(205, 65);
             kaydetbtn.TabIndex = 9;
@@ -235,7 +236,7 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(13, 36);
+            label10.Location = new Point(13, 50);
             label10.Name = "label10";
             label10.Size = new Size(87, 20);
             label10.TabIndex = 2;
@@ -244,7 +245,7 @@
             // npcchk
             // 
             npcchk.AutoSize = true;
-            npcchk.Location = new Point(120, 39);
+            npcchk.Location = new Point(120, 53);
             npcchk.Name = "npcchk";
             npcchk.Size = new Size(18, 17);
             npcchk.TabIndex = 1;
@@ -255,7 +256,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(53, 4);
+            label4.Location = new Point(54, 10);
             label4.Name = "label4";
             label4.Size = new Size(129, 23);
             label4.TabIndex = 0;
@@ -579,7 +580,7 @@
             // 
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.Location = new Point(4, 50);
+            label14.Location = new Point(13, 50);
             label14.Name = "label14";
             label14.Size = new Size(87, 20);
             label14.TabIndex = 6;
@@ -588,7 +589,7 @@
             // askeregitchk
             // 
             askeregitchk.AutoSize = true;
-            askeregitchk.Location = new Point(102, 53);
+            askeregitchk.Location = new Point(111, 53);
             askeregitchk.Name = "askeregitchk";
             askeregitchk.Size = new Size(18, 17);
             askeregitchk.TabIndex = 5;
@@ -621,7 +622,7 @@
             // 
             label30.Location = new Point(4, 70);
             label30.Name = "label30";
-            label30.Size = new Size(203, 70);
+            label30.Size = new Size(232, 70);
             label30.TabIndex = 30;
             label30.Text = "Eksi üretimde olan köylerde 1 saatten az tahıl kalmışsa NPC yapar.";
             // 
@@ -720,7 +721,7 @@
             panel7.Controls.Add(label26);
             panel7.Location = new Point(573, 293);
             panel7.Name = "panel7";
-            panel7.Size = new Size(283, 125);
+            panel7.Size = new Size(283, 116);
             panel7.TabIndex = 21;
             // 
             // chatidtxt
@@ -775,7 +776,7 @@
             // 
             label31.AutoSize = true;
             label31.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label31.Location = new Point(573, 452);
+            label31.Location = new Point(573, 421);
             label31.Name = "label31";
             label31.Size = new Size(0, 20);
             label31.TabIndex = 22;
@@ -783,16 +784,27 @@
             // lblLisansDurumu2
             // 
             lblLisansDurumu2.AutoSize = true;
-            lblLisansDurumu2.Location = new Point(566, 501);
+            lblLisansDurumu2.Location = new Point(573, 493);
             lblLisansDurumu2.Name = "lblLisansDurumu2";
             lblLisansDurumu2.Size = new Size(0, 20);
             lblLisansDurumu2.TabIndex = 23;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(12, 12);
+            button2.Name = "button2";
+            button2.Size = new Size(57, 27);
+            button2.TabIndex = 25;
+            button2.Text = "EN";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1117, 537);
+            Controls.Add(button2);
             Controls.Add(lblLisansDurumu2);
             Controls.Add(label31);
             Controls.Add(panel7);
@@ -911,5 +923,6 @@
         private Label label31;
         private Label lblLisansDurumu2;
         private Label label32;
+        private Button button2;
     }
 }

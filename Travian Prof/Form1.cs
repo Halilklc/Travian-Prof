@@ -62,7 +62,7 @@ namespace Travian_Prof
                 kayitgetir getir = new kayitgetir();
 
                 // Genel.txt dosyasındaki verileri yükle
-                getir.GenelVerileriYukle(irklbl, sunucutxt,chatidtxt, nicknametxt, passwordtxt, npckoycbx, askerkoycmbx, yayacbx, atlicbx);
+                getir.GenelVerileriYukle(irklbl, sunucutxt, chatidtxt, nicknametxt, passwordtxt, npckoycbx, askerkoycmbx, yayacbx, atlicbx);
                 getir.VillagelariYukle(npckoycbx, buildkoycbx, askerkoycmbx, bilgilbx);
                 IrkAsker irkAsker = new IrkAsker();
                 irkAsker.IrkaGoreAskerEkle(halk, yayacbx);
@@ -225,6 +225,7 @@ namespace Travian_Prof
 
 
 
+
         private async void baslatbtn_Click(object sender, EventArgs e)
         {
             if (npcchk.Checked || buildchk.Checked || askeregitchk.Checked || saldirivarchk.Checked || askerolmesinchk.Checked || otoyagmachk.Checked || otomacerachk.Checked)
@@ -233,7 +234,7 @@ namespace Travian_Prof
                 {
                     // Zamanlayıcı süreyi ayarla ve başlat
                     Random random = new Random(); // Rastgele sayı üretimi için Random sınıfı
-                    int ekstraSure = random.Next(1, 8); // 1 ile 4 dakika arasında rastgele süre oluştur
+                    int ekstraSure = random.Next(1, 3); // 1 ile 4 dakika arasında rastgele süre oluştur
 
                     geriSayimSure = (int.Parse(tekrartxt.Text) + ekstraSure) * 60; // Dakika cinsinden süreyi saniyeye çevir
                     geriSayimTimer = new System.Windows.Forms.Timer();
@@ -267,90 +268,99 @@ namespace Travian_Prof
                                     return;
                                 }
 
-                                // SaldiriVar sınıfından bir nesne oluştur
+                                // Görevleri liste olarak oluştur
+                                List<Func<IWebDriver, Task>> görevler = new List<Func<IWebDriver, Task>>();
 
-                                // Eğer saldirivarchk işaretli ise
+                                // Görevleri ekleyelim
                                 if (saldirivarchk.Checked)
                                 {
-                                    // Telegram mesajını göndermek için Baslat metodunu çağır
-                                    await saldiriVar.Baslat(driver, long.Parse(chatidtxt.Text), bilgilbx);
+                                    görevler.Add(async (driver) => await saldiriVar.Baslat(driver, long.Parse(chatidtxt.Text), bilgilbx));
                                 }
-
-
-                                // Checkbox'lara göre işlemleri tetikle
                                 if (otoyagmachk.Checked)
                                 {
-                                    OtoYagma otoYagma = new OtoYagma(driver, bilgilbx);
-                                    otoYagma.Execute(url);
+                                    görevler.Add(async (driver) =>
+                                    {
+                                        OtoYagma otoYagma = new OtoYagma(driver, bilgilbx);
+                                        otoYagma.Execute(url);
+                                    });
                                 }
-
                                 if (otomacerachk.Checked)
                                 {
-                                    otomacera macera = new otomacera();
-                                    macera.Baslat(driver);
+                                    görevler.Add(async (driver) =>
+                                    {
+                                        otomacera macera = new otomacera();
+                                        macera.Baslat(driver);
+                                    });
                                 }
-
                                 if (npcchk.Checked)
                                 {
-                                    string npcKoyXpath = "";
-                                    if (npckoycbx.SelectedItem is ComboBoxItem selectedItem)
+                                    görevler.Add(async (driver) =>
                                     {
-                                        npcKoyXpath = selectedItem.Value;
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Geçerli bir NPC Köyü seçilmedi.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                        return;
-                                    }
-                                    OtoNpc otoNpc = new OtoNpc(driver, bilgilbx, npcKoyXpath);
-                                    otoNpc.Execute(url);
+                                        string npcKoyXpath = "";
+                                        if (npckoycbx.SelectedItem is ComboBoxItem selectedItem)
+                                        {
+                                            npcKoyXpath = selectedItem.Value;
+                                        }
+                                        OtoNpc otoNpc = new OtoNpc(driver, bilgilbx, npcKoyXpath);
+                                        otoNpc.Execute(url);
+                                    });
                                 }
-
                                 if (askerolmesinchk.Checked)
                                 {
-                                    BilgiEkle("Asker Ölmesin işlemi başlatılıyor...", bilgilbx);
-                                    Askerolmesin askerOlmesin = new Askerolmesin(driver, bilgilbx, this, url);
-                                    askerOlmesin.TumKoylereTikla();
-                                }
+                                    görevler.Add(async (driver) =>
+                                    {
+                                        BilgiEkle("Asker Ölmesin işlemi başlatılıyor...", bilgilbx);
+                                        Askerolmesin askerOlmesin = new Askerolmesin(driver, bilgilbx, this, url);
+                                        askerOlmesin.TumKoylereTikla();
 
+
+
+                                    });
+                                }
                                 if (askeregitchk.Checked)
                                 {
-                                    try
+                                    görevler.Add(async (driver) =>
                                     {
-                                        Askeregitimi askeregitimiInstance = new Askeregitimi();
-                                        var irkAsker = new Askeregitimi.IrkAsker();
-                                        WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-
-                                        string askerkoycmbxXpath = "";
-                                        string atliaskerxpath = "";
-                                        string yayaaskerxpath = "";
-
-                                        if (askerkoycmbx.SelectedItem is ComboBoxItem selectedItem)
+                                        try
                                         {
-                                            askerkoycmbxXpath = selectedItem.Value;
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Lütfen geçerli bir öğe seçin (Asker Koyu).", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                            return;
-                                        }
+                                            Askeregitimi askeregitimiInstance = new Askeregitimi();
+                                            var irkAsker = new Askeregitimi.IrkAsker();
+                                            WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
-                                        if (atlicbx.SelectedItem is ComboBoxItem selectedAtli)
-                                        {
-                                            atliaskerxpath = selectedAtli.Value;
-                                        }
+                                            string askerkoycmbxXpath = "";
+                                            string atliaskerxpath = "";
+                                            string yayaaskerxpath = "";
 
-                                        if (yayacbx.SelectedItem is ComboBoxItem selectedYaya)
-                                        {
-                                            yayaaskerxpath = selectedYaya.Value;
-                                        }
+                                            if (askerkoycmbx.SelectedItem is ComboBoxItem selectedItem)
+                                            {
+                                                askerkoycmbxXpath = selectedItem.Value;
+                                            }
+                                            if (atlicbx.SelectedItem is ComboBoxItem selectedAtli)
+                                            {
+                                                atliaskerxpath = selectedAtli.Value;
+                                            }
+                                            if (yayacbx.SelectedItem is ComboBoxItem selectedYaya)
+                                            {
+                                                yayaaskerxpath = selectedYaya.Value;
+                                            }
 
-                                        await irkAsker.AskerEgitimiYap(driver, wait2, askerkoycmbxXpath, atliaskerxpath, yayaaskerxpath, atliadettxt, yayaadettxt);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MessageBox.Show($"Asker Eğitimi işlemi sırasında bir hata oluştu: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
+                                            await irkAsker.AskerEgitimiYap(driver, wait2, askerkoycmbxXpath, atliaskerxpath, yayaaskerxpath, atliadettxt, yayaadettxt, bilgilbx);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            MessageBox.Show($"Asker Eğitimi işlemi sırasında bir hata oluştu: {ex.Message}", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        }
+                                    });
+                                }
+
+
+                                // Listeyi karıştır (random sıraya göre)
+                                var görevlerKaristirilmis = görevler.OrderBy(x => random.Next()).ToList();
+
+                                // Karıştırılmış listeyi sırayla çalıştır
+                                foreach (var görev in görevlerKaristirilmis)
+                                {
+                                    await görev(driver);
                                 }
 
                                 driver.Quit(); // Tarayıcıyı tamamen kapatır
@@ -362,8 +372,10 @@ namespace Travian_Prof
                             }
                             finally
                             {
+                                int ekstraSure2 = random.Next(1, 8); // 1 ile 4 dakika arasında rastgele süre oluştur
+
                                 // Timer'ı yeniden başlat
-                                geriSayimSure = (int.Parse(tekrartxt.Text) + ekstraSure) * 60;// Süreyi yeniden başlat
+                                geriSayimSure = (int.Parse(tekrartxt.Text) + ekstraSure2) * 60; // Süreyi yeniden başlat
                                 geriSayimTimer.Start();
                             }
                         }
@@ -373,27 +385,12 @@ namespace Travian_Prof
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Programın çalışması için Tekrar dakikası girmeniz lazım." + "", "UYARI!!!");
+                    MessageBox.Show("Programın çalışması için Tekrar dakikası girmeniz lazım.", "UYARI!!!");
                 }
             }
             else
             {
                 MessageBox.Show("Hiç bir koşul aktif edilmedi. Ne çalışmasını bekliyorsun?", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
-        private async Task SendTelegramMessage(string message)
-        {
-            string token = "8119973550:AAGZ8W2CoCqO8MFI6fNF0jh7CJbVrXrWxpQ";
-            long chatId = long.Parse(chatidtxt.Text);
-            // Bu değeri kendi chat ID'nizle değiştirin
-            string url = $"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatId}&text={Uri.EscapeDataString(message)}";
-
-            using (HttpClient client = new HttpClient())
-            {
-                var result = await client.GetAsync(url);
-                BilgiEkle("Saldırı Tespit edildi\nMesaj gönderildi. Durum: " + result.StatusCode, bilgilbx);
-
             }
         }
 
@@ -415,7 +412,7 @@ namespace Travian_Prof
                 string url = sunucutxt.Text.Trim();
                 string username = nicknametxt.Text.Trim();
                 string password = passwordtxt.Text.Trim();
-                string chatid= chatidtxt.Text.Trim();
+                string chatid = chatidtxt.Text.Trim();
                 // ComboBox'lardan seçilen değerler
                 string npcKoy = npckoycbx.SelectedItem?.ToString() ?? "Seçilmedi"; // NPC Köy
                 string askerKoy = askerkoycmbx.SelectedItem?.ToString() ?? "Seçilmedi"; // Asker Köy
@@ -781,6 +778,47 @@ namespace Travian_Prof
 
             }
             else panel7.BackColor = Color.LightGreen;
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            label1.Text = "Server URL:";
+            label2.Text = "Email :";
+            label3.Text = "Password:";
+            kaydetbtn.Text = "Save Settings";
+            girisbtn.Text = "Login and Fetch Info";
+            label4.Text = "NPC CHECK";
+            label5.Text = "AUTO RAID";
+            label6.Text = "AUTO ADVENTURE";
+            label7.Text = "Upgrade Building";
+            label8.Text = "TRAIN TROOPS";
+            label9.Text = "NO TROOP DEATH";
+            label10.Text = "On/Off:";
+            label11.Text = "On/Off:";
+            label12.Text = "On/Off:";
+            label13.Text = "On/Off:";
+            label14.Text = "On/Off:";
+            label15.Text = "On/Off:";
+            label16.Text = "Infantry:";
+            label17.Text = "Cavalry:";
+            label18.Text = "Village:";
+            label19.Text = "Village:";
+            label20.Text = "Village:";
+            label21.Text = "Units";
+            label22.Text = "Every (min):";
+            label23.Text = "License:";
+            label24.Text = "Building:";
+            label25.Text = "Upgrade +1 level if resources are sufficient";
+            label26.Text = "Under Attack!";
+            label27.Text = "On/Off:";
+            label28.Text = "Chat ID:";
+            label29.Text = "RACE:";
+            label30.Text = "If there's less than 1 hour of crop left in negative production villages, NPC is triggered.";
+            label32.Text = "NOT WORKING YET";
+            baslatbtn.Text = "START";
+
 
         }
     }

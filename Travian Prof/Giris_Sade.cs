@@ -10,7 +10,6 @@ namespace Travian_Prof
 {
     internal class Giris_Sade
     {
-        private WebDriverWait wait;
         private IWebDriver driver;
 
         public Giris_Sade()

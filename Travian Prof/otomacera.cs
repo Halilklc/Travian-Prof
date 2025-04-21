@@ -1,51 +1,77 @@
 ﻿using System;
 using System.Threading;
+using System.Windows.Forms;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace Travian_Prof
 {
     internal class otomacera
     {
+        private ListBox bilgilertxt;
+
+        public otomacera(ListBox bilgilertxt = null)
+        {
+            this.bilgilertxt = bilgilertxt;
+        }
+
         public void Baslat(IWebDriver driver)
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             var wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(2));
 
-            // Macera bağlantısını bul
-            var adventuresLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(
-                By.XPath("//a[contains(@href, '/hero/adventures')]")));
-            string adventuresLinkText = adventuresLink.Text;
-
-            if (int.TryParse(adventuresLinkText, out int numericValue) && numericValue >= 1)
+            try
             {
-                // Linke tıkla
-                adventuresLink.Click();
-                Thread.Sleep(2000);
+                // Macera bağlantısını bul
+                var adventuresLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(
+                    By.XPath("//a[contains(@href, '/hero/adventures')]")));
+                string adventuresLinkText = adventuresLink.Text;
 
-                try
+                if (int.TryParse(adventuresLinkText, out int numericValue) && numericValue >= 1)
                 {
-                    var button = wait2.Until(driver =>
-                        driver.FindElement(By.XPath("//*[@id='heroAdventure']/table/tbody/tr/td[5]/button")));
+                    BilgiEkle("Macera mevcut, sayfaya gidiliyor...");
+                    MouseSimulator mouse = new MouseSimulator(driver);
+                    mouse.SimulateMouseMovementAndClick(adventuresLink);
+                    Thread.Sleep(2000);
 
-                    if (button.Displayed && button.Enabled)
+                    try
                     {
-                        // MouseSimulator kullanarak tıkla
-                        MouseSimulator simulator = new MouseSimulator(driver);
-                        simulator.SimulateMouseMovementAndClick(button);
+                        var button = wait2.Until(driver =>
+                            driver.FindElement(By.XPath("//*[@id='heroAdventure']/table/tbody/tr/td[5]/button")));
+
+                        if (button.Displayed && button.Enabled)
+                        {
+                            mouse.SimulateMouseMovementAndClick(button);
+                            BilgiEkle("Macera başlatıldı.");
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        BilgiEkle("Macera başlatılamadı: " + ex.Message);
+                    }
+
+                    Thread.Sleep(3000);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("Butona tıklanamadı: " + ex.Message);
+                    BilgiEkle("Başlatılacak macera yok.");
                 }
 
-                Thread.Sleep(3000);
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
             }
+            catch (Exception ex)
+            {
+                BilgiEkle("Macera kontrolünde hata: " + ex.Message);
+            }
+        }
 
-            // Kısa gecikme
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
+        private void BilgiEkle(string mesaj)
+        {
+            if (bilgilertxt != null)
+            {
+                bilgilertxt.Items.Add(mesaj);
+                bilgilertxt.SelectedIndex = bilgilertxt.Items.Count - 1;
+            }
         }
     }
 }

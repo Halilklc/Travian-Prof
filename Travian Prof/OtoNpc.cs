@@ -39,20 +39,20 @@ namespace Travian_Prof
                     BilgiEkle("Lütfen geçerli bir XPath seçin.");
                     return;
                 }
-
-                driver.Navigate().GoToUrl(url + "/dorf1.php");
+                var sayfalar = new Sayfalar(driver);
+                sayfalar.AnasayfaAc();
                 Random random = new Random();
                 Thread.Sleep(random.Next(3000, 7000));
+
 
                 try
                 {
                     var selectedElement = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(selectedXPath)));
                     new MouseSimulator(driver).SimulateMouseMovementAndClick(selectedElement);
-                    BilgiEkle("XPath'e tıklandı.");
+               
                 }
                 catch (Exception ex)
                 {
-                    BilgiEkle($"XPath'e tıklarken hata oluştu: {ex.Message}");
                     return;
                 }
 
@@ -66,6 +66,7 @@ namespace Travian_Prof
                 double saatlikUretim = ParseToDouble(productionElement.Text, "Saatlik üretim");
 
                 double npcdepo = saatlikUretim / 2 + mevcutDepo;
+
 
                 if (npcdepo >= toplamDepo)
                 {
@@ -83,12 +84,17 @@ namespace Travian_Prof
         {
             MouseSimulator simulator = new MouseSimulator(driver);
 
-            driver.Navigate().GoToUrl(url + "/build.php?id=31&gid=17&t=0");
+            var sayfalar = new Sayfalar(driver);
+            sayfalar.NPCSayfasi();
+            Random random = new Random();
+            Thread.Sleep(random.Next(3000, 7000));
+
 
             var takasLink = wait.Until(ExpectedConditions.ElementIsVisible(
-                By.XPath("//*[contains(@aria-label, 'Hammadde takası') or contains(text(), 'Hammadde takası')]")));
+        By.XPath("//*[contains(@class, 'textButtonV1') and contains(@class, 'gold')]")));
             simulator.SimulateMouseMovementAndClick(takasLink);
             Thread.Sleep(1000);
+
 
             string[] inputXpaths = {
                 "//*[@id='npc']/tbody/tr[1]/td[1]/input",
@@ -104,9 +110,10 @@ namespace Travian_Prof
             }
 
             var hammaddeLink = wait.Until(ExpectedConditions.ElementIsVisible(
-                By.XPath("//*[contains(@aria-label, 'Hammadde dağıt') or contains(text(), 'Hammadde dağıt')]")));
+        By.XPath("//*[contains(@onclick, 'exchangeResources.distribute')]")));
             simulator.SimulateMouseMovementAndClick(hammaddeLink);
             Thread.Sleep(2000);
+
 
             var altinHarcamButton = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='npc_market_button']")));
             simulator.SimulateMouseMovementAndClick(altinHarcamButton);

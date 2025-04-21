@@ -3,7 +3,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System.Windows.Forms;  // ListBox kullanabilmek için gerekli namespace
+using System.Windows.Forms;
+using System.Security.Cryptography.X509Certificates;  // ListBox kullanabilmek için gerekli namespace
 
 namespace Travian_Prof
 {
@@ -12,34 +13,54 @@ namespace Travian_Prof
         // ListBox BilgiEkle yerine Action kullanacağız.
         public async Task Baslat(IWebDriver driver, long chatId, ListBox bilgilbx)
         {
+
+
+
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
-            
-           try
+            try
             {
-                // Sayfada class'ları "listEntry village attack" olan öğeyi kontrol et
-                var attackVillageEntry = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(
-                    By.CssSelector(".listEntry.village.attack")));
+                // Sayfada class'ları "listEntry village attack" olan tüm öğeleri kontrol et
+                var attackVillageEntries = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions
+                    .VisibilityOfAllElementsLocatedBy(By.CssSelector(".listEntry.village.attack")));
 
-                // Eğer bulunduysa mesaj gönder
-                await SendTelegramMessage("⚔️ Saldırı altında olan bir köy listede görünüyor!", chatId, bilgilbx);
+                if (attackVillageEntries.Count == 0)
+                {
+                    bilgilbx.Items.Add("Saldırı Yok");
+                    return;
+                }
+
+                // Her saldırı öğesi için işlem yap
+                foreach (var attackVillageEntry in attackVillageEntries)
+                {
+                    try
+                    {
+                        var villageNameElement = attackVillageEntry.FindElement(By.CssSelector("span.name"));
+                        string villageName = villageNameElement.Text;
+
+                        for (int i = 0; i < 2; i++)
+                        {
+                            await SendTelegramMessage("⚔️" + villageName + "⚔ Saldırı altında !!!", chatId, bilgilbx);
+                            await Task.Delay(4000); // 3.5 saniye bekle
+                        }
+                    }
+                    catch (NoSuchElementException)
+                    {
+                        bilgilbx.Items.Add("Bir köy ismi bulunamadı.");
+                    }
+                }
             }
             catch (WebDriverTimeoutException)
             {
-                // Eğer öğe bulunamazsa kullanıcıya bildir ve işlemi durdur
                 bilgilbx.Items.Add("Saldırı Yok");
                 return;
             }
             catch (Exception ex)
             {
-                // Diğer olası hatalar
-                Console.WriteLine("Hata: " + ex.Message);
                 bilgilbx.Items.Add("Hata oluştu: " + ex.Message);
             }
+        }
 
-
-
-            }
 
         // Telegram mesajını gönderecek metot
         private async Task SendTelegramMessage(string message, long chatId, ListBox bilgilbx)
